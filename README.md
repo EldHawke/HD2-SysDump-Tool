@@ -1,10 +1,14 @@
-Just notes for now:  
-  Thing to add:
-    Windows Fast Startup = OFF (avoids GG’s service from waking half-broken)
-    Add HD2 and GG to defender exclusions (...\steamapps\common\Helldivers 2\)
-    Disable service ClickToRunSvc
-    Disable ipv6 (add to DNS fix?)
-  Things to research:
-    Figure out GG HID hook detection to scan for similar apps
-    Figure out more about GG and DEP
-    Test more with steams ping per minute
+# Notes (Work in Progress)
+
+## 🛠️ Things to Add
+- [ ] **Windows Fast Startup** → **OFF**  
+  _(prevents GG’s service from waking in a half-broken state)_
+- [ ] Add **HD2** and **GG** to Defender exclusions  
+  `...\steamapps\common\Helldivers 2\`
+- [ ] Disable **ClickToRunSvc** service
+- [ ] Disable **IPv6** (possibly include in DNS fix)
+
+## 🔍 Things to Research
+- [ ] Investigate **GG HID hook detection** → scan for similar apps
+- [ ] Learn more about **GG** and **DEP**
+- [ ] Test further with **Steam’s ping-per-minute**
