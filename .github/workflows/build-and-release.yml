@@ -1,59 +1,46 @@
-name: Build and Release Single EXE
+name: Build and Release
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
 
       - name: Restore NuGet packages
-        shell: pwsh
-        run: nuget restore "HD2-TS-Tool.sln"
+        run: nuget restore HD2-TS-Tool.sln
 
-      - name: Build with MSBuild (ClickOnce signing disabled)
-        shell: pwsh
-        run: |
-          $msbuild = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-          Write-Host "Using MSBuild at $msbuild"
-          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false /p:Platform="Any CPU"
+      - name: Build solution
+        run: msbuild HD2-TS-Tool.sln /p:Configuration=Release
 
-      - name: List Release folder for debugging
-        shell: pwsh
-        run: Get-ChildItem "HD2-TS-Tool\bin\Release" -Recurse
-
-      - name: Find built EXE
+      - name: Find the real EXE
         id: findexe
         shell: pwsh
         run: |
-          $exe = Get-ChildItem -Path "HD2-TS-Tool\bin\Release" -Filter *.exe -Recurse | Select-Object -First 1
-          if (-not $exe) { throw "No EXE found in bin\Release" }
-          Write-Host "Found EXE: $($exe.FullName)"
+          $exe = Get-ChildItem -Path "HD2-TS-Tool\bin\Release" -Filter "HD2-TS-Tool.exe" -Recurse | Select-Object -First 1
+          if (-not $exe) {
+            Write-Error "No HD2-TS-Tool.exe found in bin\\Release"
+            exit 1
+          }
           echo "EXE_PATH=$($exe.FullName)" >> $env:GITHUB_ENV
-
-      - name: Create unique Git tag
-        id: tag
-        shell: pwsh
-        run: |
-          $tag = "v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')"
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag $tag
-          git push origin $tag
-          echo "TAG=$tag" >> $env:GITHUB_ENV
 
       - name: Upload EXE to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG }}
-          name: HD2-TS-Tool ${{ env.TAG }}
-          draft: false
-          prerelease: false
+          tag_name: ${{ github.ref_name }}
+          name: HD2-TS-Tool ${{ github.ref_name }}
           files: ${{ env.EXE_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
