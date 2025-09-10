@@ -1,3 +1,6 @@
+# Download here:
+- [Download HD2-TS-Tool](https://github.com/EldHawke/HD2-TS-Tool/releases/latest/download/HD2-TS-Tool.zip)
+
 # Notes (Work in Progress)
 
 ## 🛠️ Things to Add

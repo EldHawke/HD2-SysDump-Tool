@@ -1,0 +1,49 @@
+name: Build and Release .NET Framework EXE
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: nuget restore "HD2-TS-Tool.sln"
+
+      - name: Build with MSBuild (ClickOnce signing disabled)
+        shell: pwsh
+        run: |
+          $msbuild = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+          Write-Host "Using MSBuild at $msbuild"
+          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false
+
+      - name: Zip Release folder
+        shell: pwsh
+        run: |
+          $releasePath = "HD2-TS-Tool\bin\Release\*"
+          $zipPath = "HD2-TS-Tool.zip"
+          if (Test-Path $zipPath) { Remove-Item $zipPath }
+          Compress-Archive -Path $releasePath -DestinationPath $zipPath
+
+      - name: Create GitHub Release and upload ZIP
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: HD2-TS-Tool v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload ZIP to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: HD2-TS-Tool.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
