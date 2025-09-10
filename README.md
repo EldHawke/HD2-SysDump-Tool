@@ -14,6 +14,7 @@
 - [ ] Investigate **GG HID hook detection** → scan for similar apps
 - [ ] Learn more about **GG** and **DEP**
 - [ ] Test further with **Steam’s ping-per-minute**
+- [ ] Figure out how to detect overlays somehow
 
 ## Dropped/Not working
 - ~~[ ] Disable **ClickToRunSvc** service~~ - breaks outlook and other MS apps
