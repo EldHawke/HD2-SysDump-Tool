@@ -21,7 +21,16 @@ jobs:
         run: |
           $msbuild = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
           Write-Host "Using MSBuild at $msbuild"
-          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false
+          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false /p:Platform="Any CPU"
+
+      - name: Find built EXE
+        id: findexe
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path "HD2-TS-Tool\bin\Release" -Filter *.exe -Recurse | Select-Object -First 1
+          if (-not $exe) { throw "No EXE found in bin\Release" }
+          Write-Host "Found EXE: $($exe.FullName)"
+          echo "EXE_PATH=$($exe.FullName)" >> $env:GITHUB_ENV
 
       - name: Create unique Git tag
         id: tag
@@ -34,13 +43,13 @@ jobs:
           git push origin $tag
           echo "TAG=$tag" >> $env:GITHUB_ENV
 
-      - name: Upload single EXE to GitHub Release
+      - name: Upload EXE to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
           name: HD2-TS-Tool ${{ env.TAG }}
           draft: false
           prerelease: false
-          files: HD2-TS-Tool\bin\Release\HD2-TS-Tool.exe
+          files: ${{ env.EXE_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
