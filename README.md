@@ -7,6 +7,7 @@
   `...\steamapps\common\Helldivers 2\`
 - [ ] Disable **ClickToRunSvc** service
 - [ ] Disable **IPv6** (possibly include in DNS fix)
+- [ ] Add sfc/dsim and chkdsk checks
 
 ## 🔍 Things to Research
 - [ ] Investigate **GG HID hook detection** → scan for similar apps
