@@ -8,6 +8,7 @@
 - [ ] Disable **IPv6** (possibly include in DNS fix)
 - [ ] Add sfc/dsim and chkdsk checks
 - [ ] Simple RAM test - check for bad memory blocks
+- [ ] Add options to uninstall known issue hotfixes
 
 ## 🔍 Things to Research
 - [ ] Investigate **GG HID hook detection** → scan for similar apps
