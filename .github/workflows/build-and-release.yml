@@ -23,6 +23,10 @@ jobs:
           Write-Host "Using MSBuild at $msbuild"
           & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false /p:Platform="Any CPU"
 
+      - name: List Release folder for debugging
+        shell: pwsh
+        run: Get-ChildItem "HD2-TS-Tool\bin\Release" -Recurse
+
       - name: Find built EXE
         id: findexe
         shell: pwsh
