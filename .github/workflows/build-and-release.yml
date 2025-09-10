@@ -1,4 +1,4 @@
-name: Build and Release .NET Framework EXE
+name: Build and Release Single EXE
 
 on:
   push:
@@ -23,14 +23,6 @@ jobs:
           Write-Host "Using MSBuild at $msbuild"
           & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false
 
-      - name: Zip Release folder
-        shell: pwsh
-        run: |
-          $releasePath = "HD2-TS-Tool\bin\Release\*"
-          $zipPath = "HD2-TS-Tool.zip"
-          if (Test-Path $zipPath) { Remove-Item $zipPath }
-          Compress-Archive -Path $releasePath -DestinationPath $zipPath
-
       - name: Create unique Git tag
         id: tag
         shell: pwsh
@@ -42,13 +34,13 @@ jobs:
           git push origin $tag
           echo "TAG=$tag" >> $env:GITHUB_ENV
 
-      - name: Create GitHub Release and upload ZIP
+      - name: Upload single EXE to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
           name: HD2-TS-Tool ${{ env.TAG }}
           draft: false
           prerelease: false
-          files: HD2-TS-Tool.zip
+          files: HD2-TS-Tool\bin\Release\HD2-TS-Tool.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
