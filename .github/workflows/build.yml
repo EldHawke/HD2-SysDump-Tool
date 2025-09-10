@@ -18,13 +18,14 @@ jobs:
         shell: pwsh
         run: nuget restore "HD2-TS-Tool.sln"
 
-      - name: Build with MSBuild
+      - name: Build with MSBuild (ClickOnce signing disabled)
         shell: pwsh
         run: |
           # Find latest MSBuild installed
           $msbuild = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
           Write-Host "Using MSBuild at $msbuild"
-          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release
+          # Build solution with SignManifests=false to bypass missing certificate
+          & $msbuild "HD2-TS-Tool.sln" /p:Configuration=Release /p:SignManifests=false
 
       - name: Zip Release folder
         shell: pwsh
