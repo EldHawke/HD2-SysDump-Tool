@@ -1,6 +1,3 @@
-# Download this:
-- https://github.com/EldHawke/HD2-TS-Tool/blob/main/HD2-TS-Tool.exe
-
 # Notes (Work in Progress)
 
 ## 🛠️ Things to Add
