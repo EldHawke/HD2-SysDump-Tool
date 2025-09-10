@@ -1,8 +1,9 @@
 # Build results
-bin/
-obj/
+**/bin/
+**/obj/
 Debug/
 Release/
+out/
 *.exe
 *.dll
 
