@@ -27,14 +27,15 @@ jobs:
         shell: pwsh
         run: Get-ChildItem "HD2-TS-Tool\bin\Release" -Recurse
 
-      - name: Find main EXE (ignore vshost)
+      - name: Find built EXE
         id: findexe
         shell: pwsh
         run: |
           $exe = Get-ChildItem -Path "HD2-TS-Tool\bin\Release" -Filter "HD2-TS-Tool.exe" -Recurse | Select-Object -First 1
           if (-not $exe) { throw "HD2-TS-Tool.exe not found in bin\Release" }
-          Write-Host "Found EXE: $($exe.FullName)"
-          echo "EXE_PATH=$($exe.FullName)" >> $env:GITHUB_ENV
+          $relPath = $exe.FullName.Substring((Get-Location).Path.Length + 1)
+          Write-Host "Found EXE: $relPath"
+          echo "EXE_PATH=$relPath" >> $env:GITHUB_ENV
 
       - name: Create unique Git tag
         id: tag
